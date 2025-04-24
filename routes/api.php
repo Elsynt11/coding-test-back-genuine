@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\CategoryController;
 
-Route::get('/categories', function () {
-    return response()->json(['Funcionando' => true]);
-});
+Route::resource('/categories', CategoryController::class);
 
