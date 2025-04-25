@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\API\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -14,20 +15,30 @@ class DialogflowController extends Controller
     public function store(Request $request)
     {
         $hook = $request->input('queryResult.intent.displayName');
+        $categoryController = new CategoryController();
 
         switch ($hook) 
         {
             case 'Create Category':
-                return $this->consume_EndPoint_Category('/api/categories', $request, 'POST');
+
+                $data = new Request([
+                    'name' => $request->input('queryResult.parameters.name'),
+                    'description' => $request->input('queryResult.parameters.description'),
+                ]);
+
+                $response = $categoryController->store($data);
+                // return $this->consume_EndPoint_Category('/api/categories', $request, 'POST');
             break;
 
             case 'Categories':
-                return $this->consume_EndPoint_Category('/api/categories', $request, 'GET');
+                $response = $categoryController->index();
+                // return $this->consume_EndPoint_Category('/api/categories', $request, 'GET');
             break;
 
             case 'Show Category':
                 $id = $request->input('queryResult.parameters.id');
-                return $this->consume_EndPoint_Category("/api/categories/$id", $request, 'GET');
+                $response = $categoryController->show($id);
+                // return $this->consume_EndPoint_Category("/api/categories/$id", $request, 'GET');
             break;
 
             default:
@@ -36,6 +47,12 @@ class DialogflowController extends Controller
                 ]);
             break;
         }
+
+        $originalResponse = $response->getData(true);
+        return response()->json([
+            'fulfillmentText' => $originalResponse['message'] ?? 'Success request.',
+            'data' => $originalResponse['data'] ?? null
+        ]);
     }
 
     private function consume_EndPoint_Category($endpoint, $request, $method)
