@@ -14,7 +14,23 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Product::all();
+        try 
+        {
+            $products = Product::all();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Products retrieved successfully',
+                'data' => $products
+            ], 200);
+        } 
+        catch (\Exception $ex) 
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error ocurred: '. $ex->getMessage()
+            ], 500);
+        }
     }
 
     /**
