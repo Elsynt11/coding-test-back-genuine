@@ -41,6 +41,12 @@ class DialogflowController extends Controller
                 // return $this->consume_EndPoint_Category("/api/categories/$id", $request, 'GET');
             break;
 
+            case 'Available Products':
+                $id = $request->input('queryResult.parameters.id');
+                $response = $categoryController->show_available_products($id);
+                // return $this->consume_EndPoint_Category("/api/categories/$id", $request, 'GET');
+            break;
+
             default:
                 return response()->json([
                     'FulfillmentText' => 'Unknown Hook'
