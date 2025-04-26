@@ -71,7 +71,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(int $id)
     {
         try 
         {
@@ -90,6 +90,36 @@ class CategoryController extends Controller
                 'success' => true,
                 'message' => 'Category found',
                 'data' => $category
+            ], 200);
+        } 
+        catch (\Exception $ex) 
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error ocurred: ' . $ex->getMessage() 
+            ], 500);
+        }
+    }
+
+    public function show_available_products(int $id)
+    {
+        try 
+        {
+            $category = Category::find($id);
+            $available_products = $category->products->sum('quantity');
+
+            if(!$category) 
+            {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Category not found'
+                ], 404);
+            }
+
+            return  response()->json([
+                'success' => true,
+                'message' => 'Available products category',
+                'data' => $available_products
             ], 200);
         } 
         catch (\Exception $ex) 

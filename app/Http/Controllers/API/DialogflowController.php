@@ -50,8 +50,8 @@ class DialogflowController extends Controller
 
         $originalResponse = $response->getData(true);
         return response()->json([
-            'fulfillmentText' => $originalResponse['message'] ?? 'Success request.',
-            'data' => $originalResponse['data'] ?? null
+            'fulfillmentText' => $originalResponse,
+            // 'data' => $originalResponse['data'] ?? null
         ]);
     }
 
